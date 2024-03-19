@@ -1,10 +1,23 @@
-package handler
- 
+package api
+
 import (
-  "fmt"
-  "net/http"
+	"encoding/json"
+	"net/http"
+
+	"github.com/buoto/civ-6-bot/turn"
 )
- 
-func Handler(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, "<h1>Hello from Go!</h1>")
+
+// ListAllHandler lists all turn notifications and returns them as csv
+func ListAllHandler(w http.ResponseWriter, r *http.Request) {
+  repo := turn.NewTurnNotificationRepository()
+  notifications, err := repo.GetAll()
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    return
+  }
+
+  w.Header().Set("Content-Type", "text/csv")
+  w.WriteHeader(http.StatusOK)
+  encoder := json.NewEncoder(w)
+  encoder.Encode(notifications)
 }
