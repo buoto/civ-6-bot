@@ -13,6 +13,7 @@ func ListAllHandler(w http.ResponseWriter, r *http.Request) {
   notifications, err := repo.GetAll()
   if err != nil {
     w.WriteHeader(http.StatusInternalServerError)
+    w.Write([]byte(err.Error()))
     return
   }
 
